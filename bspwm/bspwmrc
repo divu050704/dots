@@ -1,0 +1,57 @@
+#! /bin/sh
+
+pgrep -x sxhkd > /dev/null || sxhkd &
+
+# Check if two monitors are connected and act accordingly for bars 
+monitors=$(xrandr -q | grep " connected" | cut -d ' ' -f1 | wc -w)
+if [ $monitors > 1 ];then 
+	bspc monitor Virtual1 -d I II III
+	bspc monitor  Virtual2  -d IV V VI
+	killall -q polybar
+	polybar -q main  -c  ~/.config/polybar/docky/config.ini &
+	polybar -q Virtual2 -c ~/.config/polybar/docky/config.ini &
+else
+	killall -q polybar
+	bspc monitor Virtual1 -d I II III
+	polybar -q main  -c  ~/.config/polybar/docky/config.ini &
+
+fi
+
+
+# bspwm configurations
+bspc config border_width         1
+bspc config window_gap          12
+bspc config left_padding        25
+bspc config right_padding		25
+bspc config top_padding			75
+bspc config bottom_padding		30
+bspc config split_ratio          0.52
+bspc config borderless_monocle   true
+bspc config gapless_monocle      true
+bspc config ignore_ewmh_focus true
+
+# rules for exception applications 
+bspc rule -a Chromium desktop='^2' follow=on
+bspc rule -a firefox desktop='^3' follow=off state=tiled
+bspc rule -a discord desktop='^4' follow=off
+bspc rule -a Discord desktop='^4' follow=off
+bspc rule -a Zathura desktop='^7' state=tiled follow=on
+bspc rule -a libreoffice-startcenter desktop='^9'
+bspc rule -a libreoffice-writer desktop='^9'
+bspc rule -a libreoffice-calc desktop='^9'
+bspc rule -a libreoffice-math desktop='^9'
+bspc rule -a Steam desktop='^10' follow=off
+
+
+sxhkd &
+compton --config ~/.config/compf/compf.conf &
+
+# find the current wallpaper set by nitrogen and pass it to pywal
+wallpaper_set=$(cat ~/.config/nitrogen/bg-saved.cfg  | grep file -m 1  | cut -d "=" -f2)
+
+bash ~/.config/polybar/docky/scripts/pywal.sh $wallpaper_set
+
+# restore last nitrogen wallpaper
+nitrogen --restore
+
+

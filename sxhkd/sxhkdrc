@@ -1,0 +1,31 @@
+# To spawn the terminal
+alt + Return
+  xfce4-terminal
+
+# make sxhkd reload its configuration files:
+alt + Escape
+    pkill -USR1 -x sxhkd
+
+# quit/restart bspwm
+shift + alt + {q,r}
+  bspc {quit,wm -r}
+
+# Powermenu of polybar
+super + shift + Escape
+    /home/divu050704/.config/polybar/hack/scripts/powermenu.sh
+# start dmenu
+alt + d
+  dmenu_run
+
+# Close the focused window
+super +  Escape
+  bspc node -c
+
+# Change focus for windows or move windows
+alt + {_,shift + }{Left,Down,Up,Right}
+  bspc node --{focus,swap} {west,south,north,east}
+
+# Change desktops
+super + {Left,Right}
+  bspc desktop --focus {prev,next}
+
